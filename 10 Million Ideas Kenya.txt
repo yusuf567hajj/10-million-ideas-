@@ -1,0 +1,1394 @@
+import React, { useState, useEffect, useMemo } from 'react';
+import { 
+  TrendingUp, Flame, Newspaper, Trophy, ShieldAlert, Sparkles, 
+  Smartphone, CheckCircle2, Lock, Unlock, PlayCircle, Eye, 
+  Search, Moon, Sun, DollarSign, BarChart3, PlusCircle, RefreshCw, 
+  Radio, BookOpen, Clock, ChevronRight, Share2, AlertCircle, 
+  Sliders, UserCheck, X, Volume2, ArrowUpRight, Zap, Check, Key,
+  Tv, Cpu, Briefcase, Heart, Sprout, Home, Menu
+} from 'lucide-react';
+
+// --- INITIAL MOCK DATA ---
+const INITIAL_CATEGORIES = [
+  { id: 'all', name: 'All Stories', icon: Sparkles },
+  { id: 'football', name: 'Football & Sports', icon: Trophy },
+  { id: 'news', name: 'Kenya Breaking', icon: Flame },
+  { id: 'entertainment', name: 'Gossip & Celebs', icon: Heart },
+  { id: 'lifestyle', name: 'Household & Life', icon: Home },
+  { id: 'business', name: 'Money & Hustles', icon: Briefcase },
+  { id: 'tech', name: 'Tech & AI', icon: Cpu },
+  { id: 'agriculture', name: 'Farming & Agribusiness', icon: Sprout },
+];
+
+const INITIAL_STORIES = [
+  {
+    id: 'story-1',
+    title: "What Really Happened Behind This Shocking Football Decision in the EPL?",
+    teaser: "Exclusive analysis into how top tactical shifts and behind-the-scenes boardroom disputes led to one of the most unexpected club managerial turnarounds this season.",
+    category: 'football',
+    type: 'article',
+    author: 'Otieno Omolo',
+    date: '10 Mins Ago',
+    readTime: '4 min read',
+    price: 20,
+    isComplimentaryEligible: true,
+    thumbnail: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=1200&q=80',
+    views: '42.8k',
+    trending: true,
+    hero: true,
+    content: `
+### The Turning Point in European Football Management
+
+When the whistle blew during last weekend's key clash, few spectators realized they were witnessing the final tactical experiment of a turbulent managerial era. Sources close to the club's executive committee reveal that a heated 3-hour midnight meeting precedes the sudden tactical overhaul.
+
+> "Decisions at this elite level are rarely about individual matches—they are about long-term vision, commercial alignment, and dressing room authority." — Senior Analyst
+
+#### 1. Data Analytics vs Traditional Scouting
+Modern top-flight football clubs rely heavily on predictive algorithms. The manager's refusal to incorporate expected goals (xG) metrics into mid-game substitutions created friction with the Director of Football.
+
+#### 2. Player Dynamics & Locker Room Politics
+Star players expressed hesitation over rigid defensive transitions. The shift back to high-pressing 4-3-3 counter-attacks immediately restored fluidity on the pitch.
+
+#### What Happens Next for Harambee Stars Prospects?
+For Kenyan football enthusiasts tracking overseas talent, this tactical realignment opens direct opportunities for emerging midfielders who thrive in fast-paced transition play.
+    `
+  },
+  {
+    id: 'story-2',
+    title: "Most Kenyan Homes Overlook This Simple Energy & Money-Saving Trick",
+    teaser: "Before paying your next monthly electricity or shopping bill, discover the 3 household adjustments saving Kenyan families over KSh 8,500 monthly.",
+    category: 'lifestyle',
+    type: 'article',
+    author: 'Wambui Mwangi',
+    date: '1 Hour Ago',
+    readTime: '3 min read',
+    price: 10,
+    isComplimentaryEligible: true,
+    thumbnail: 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=800&q=80',
+    views: '29.1k',
+    trending: true,
+    hero: false,
+    content: `
+### Household Economics: Reducing Monthly Bills Smartly
+
+Living costs in Nairobi and major Kenyan urban centers require strategic budgeting. Many families unknowingly waste hundreds of shillings daily due to phantom power draws and sub-optimal cooking fuel usage.
+
+#### Key Household Hacks:
+1. **Phantom Loads:** Devices left on standby mode (TV decoders, microwave timers) consume up to 12% of baseline home electricity.
+2. **Thermal Efficiency:** Using thermal flask cooking methods for traditional legumes saves over 65% of LPG gas.
+3. **Smart Bulk Purchasing:** Group buying directly from regional agricultural hubs bypasses retail markups by up to 35%.
+    `
+  },
+  {
+    id: 'story-3',
+    title: "A Small Business Idea More Kenyans Should Consider in 2026",
+    teaser: "Low capital, high demand: How specialized micro-logistics and tech-enabled fresh produce delivery is turning KSh 15k investments into steady monthly incomes.",
+    category: 'business',
+    type: 'article',
+    author: 'David Kiprop',
+    date: '3 Hours Ago',
+    readTime: '5 min read',
+    price: 30,
+    isComplimentaryEligible: true,
+    thumbnail: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80',
+    views: '35.4k',
+    trending: true,
+    hero: false,
+    content: `
+### Micro-Logistics: The Hidden Gem in Kenyan Local Markets
+
+Urban consumer habits are rapidly evolving. Busy urban professionals in Kilimani, Westlands, Nakuru, and Eldoret are willing to pay a premium for verified fresh farm produce delivered directly to their doorstep.
+
+#### Starting Small: Step-by-Step
+- **Capital Required:** KSh 10,000 - 20,000 for insulated transport bags and local supplier deposits.
+- **Customer Acquisition:** Utilizing targeted local WhatsApp community groups and Instagram reels.
+- **Profit Margins:** Average net returns range between 25% to 40% on daily volume sales.
+    `
+  },
+  {
+    id: 'story-4',
+    title: "Tactical Masterclass: How Harambee Stars Sealed Championship Qualifier",
+    teaser: "In-depth video analysis breaking down the defensive structure, counter-attacking efficiency, and mid-field dominance that shocked the continent.",
+    category: 'football',
+    type: 'video',
+    author: 'KPL Insider',
+    date: '5 Hours Ago',
+    readTime: '8 min watch',
+    price: 50,
+    isComplimentaryEligible: true,
+    thumbnail: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=800&q=80',
+    videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
+    views: '51.2k',
+    trending: true,
+    hero: false,
+    content: "Watch our exclusive tactical breakdowns featuring pitch markings, heatmap comparisons, and exclusive post-match interviews."
+  },
+  {
+    id: 'story-5',
+    title: "The Detail Every Kenyan AI & Tech Enthusiast Must Watch Today",
+    teaser: "How free local AI language models are helping Kenyan freelancers automate content creation, client work, and high-paying global remote roles.",
+    category: 'tech',
+    type: 'article',
+    author: 'Achieng Odhiambo',
+    date: '6 Hours Ago',
+    readTime: '4 min read',
+    price: 20,
+    isComplimentaryEligible: true,
+    thumbnail: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80',
+    views: '18.9k',
+    trending: false,
+    hero: false,
+    content: "Artificial intelligence is democratizing remote work across Africa. Discover the exact tools, prompts, and platforms currently powering top-performing Kenyan digital agencies."
+  },
+  {
+    id: 'story-6',
+    title: "High-Yield Avocado & Dragonfruit Farming Secrets Unveiled",
+    teaser: "Why modern Kenyan farmers are shifting from traditional cash crops to high-value export fruits with guaranteed off-take contracts.",
+    category: 'agriculture',
+    type: 'article',
+    author: 'Peter Kamau',
+    date: 'Yesterday',
+    readTime: '6 min read',
+    price: 20,
+    isComplimentaryEligible: true,
+    thumbnail: 'https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&w=800&q=80',
+    views: '22.3k',
+    trending: false,
+    hero: false,
+    content: "Export markets in Europe and the Middle East continue to exhibit unsatisfied demand for premium Kenyan agricultural produce. Learn about soil testing, drip irrigation, and direct export licensing."
+  }
+];
+
+const RSS_FEEDS_SIMULATION = [
+  { source: 'Citizen Digital', headline: 'Parliamentary Committee Proposes New Fiscal Guidelines for Tech Hubs', category: 'news', time: '12m ago' },
+  { source: 'Tuko News', headline: 'Viral Celebrity Couple Unveils New Joint Business Venture in Kilimani', category: 'entertainment', time: '25m ago' },
+  { source: 'Nation Africa', headline: 'Kenyan Shilling Shows Strong Momentum Against Major Currencies', category: 'business', time: '40m ago' },
+  { source: 'Standard Digital', headline: 'EPL Transfer Window: Big Clubs Eyeing Rising East African Talent', category: 'football', time: '1h ago' },
+  { source: 'Kenyans.co.ke', headline: 'New Expressway Expansion Project Announced by Infrastructure Ministry', category: 'news', time: '2h ago' }
+];
+
+export default function App() {
+  // --- STATE MANAGEMENT ---
+  const [theme, setTheme] = useState('dark');
+  const [activeCategory, setActiveCategory] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [stories, setStories] = useState(INITIAL_STORIES);
+  const [selectedStory, setSelectedStory] = useState(null);
+  const [activeTab, setActiveTab] = useState('home'); // 'home', 'rss', 'ai-assistant', 'admin'
+  const [vipPassActive, setVipPassActive] = useState(false);
+
+  // Visitor & Entitlement State
+  const [visitorToken, setVisitorToken] = useState('');
+  const [complimentaryUsed, setComplimentaryUsed] = useState(false);
+  const [purchasedStoryIds, setPurchasedStoryIds] = useState([]);
+  const [transactions, setTransactions] = useState([]);
+  const [toastMessage, setToastMessage] = useState(null);
+
+  // M-Pesa Modal State
+  const [showMpesaModal, setShowMpesaModal] = useState(false);
+  const [mpesaPhoneNumber, setMpesaPhoneNumber] = useState('');
+  const [pendingStoryToUnlock, setPendingStoryToUnlock] = useState(null);
+  const [mpesaStatus, setMpesaStatus] = useState('idle'); // idle, initiating, prompt_sent, pin_entered, success, error
+  const [mpesaReceipt, setMpesaReceipt] = useState('');
+  const [selectedBundle, setSelectedBundle] = useState('single'); // single, bundle3, vipDaily
+
+  // Admin & Audio state
+  const [adminPin, setAdminPin] = useState('');
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(true);
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  const [editingStory, setEditingStory] = useState(null);
+
+  // AI Assistant generator state
+  const [aiTopic, setAiTopic] = useState('');
+  const [aiGeneratedDraft, setAiGeneratedDraft] = useState(null);
+
+  // --- COMPLIMENTARY & ENTITLEMENT INITIALIZATION ---
+  useEffect(() => {
+    let token = localStorage.getItem('10m_visitor_token');
+    if (!token) {
+      token = 'KE_VISITOR_' + Math.random().toString(36).substring(2, 10).toUpperCase();
+      localStorage.setItem('10m_visitor_token', token);
+    }
+    setVisitorToken(token);
+
+    const compUsed = localStorage.getItem('10m_complimentary_used') === 'true';
+    setComplimentaryUsed(compUsed);
+
+    const savedPurchases = JSON.parse(localStorage.getItem('10m_purchases') || '[]');
+    setPurchasedStoryIds(savedPurchases);
+
+    const savedTx = JSON.parse(localStorage.getItem('10m_transactions') || '[]');
+    setTransactions(savedTx);
+  }, []);
+
+  const triggerToast = (msg, type = 'info') => {
+    setToastMessage({ text: msg, type });
+    setTimeout(() => setToastMessage(null), 4000);
+  };
+
+  // Check if story is entitled
+  const isEntitled = (story) => {
+    if (!story) return false;
+    if (vipPassActive) return true;
+    return purchasedStoryIds.includes(story.id);
+  };
+
+  // Open Story Reader logic
+  const handleOpenStory = (story) => {
+    setSelectedStory(story);
+
+    // If already unlocked or VIP active, open directly
+    if (isEntitled(story)) return;
+
+    // Check Complimentary Trial
+    if (!complimentaryUsed && story.isComplimentaryEligible) {
+      // Grant complimentary access
+      const updatedPurchases = [...purchasedStoryIds, story.id];
+      setPurchasedStoryIds(updatedPurchases);
+      localStorage.setItem('10m_purchases', JSON.stringify(updatedPurchases));
+      setComplimentaryUsed(true);
+      localStorage.setItem('10m_complimentary_used', 'true');
+      triggerToast('🎉 Complimentary Full Access Unlocked! Enjoy your 1st free reading on 10 Million Ideas Kenya.', 'success');
+    }
+  };
+
+  // Initiate M-Pesa Purchase Modal
+  const triggerMpesaCheckout = (story) => {
+    setPendingStoryToUnlock(story);
+    setMpesaStatus('idle');
+    setMpesaReceipt('');
+    setShowMpesaModal(true);
+  };
+
+  // Simulate Daraja STK Push Backend Callbacks
+  const handleProcessMpesaPayment = () => {
+    if (!mpesaPhoneNumber || mpesaPhoneNumber.length < 9) {
+      triggerToast('Please enter a valid Kenyan Safaricom phone number', 'error');
+      return;
+    }
+
+    setMpesaStatus('initiating');
+
+    setTimeout(() => {
+      setMpesaStatus('prompt_sent');
+      
+      // Simulate User entering PIN on phone
+      setTimeout(() => {
+        setMpesaStatus('pin_entered');
+        
+        // Backend callback validation simulation
+        setTimeout(() => {
+          const receiptCode = 'QHK' + Math.floor(100000 + Math.random() * 900000);
+          setMpesaReceipt(receiptCode);
+          setMpesaStatus('success');
+
+          let amountPaid = pendingStoryToUnlock ? pendingStoryToUnlock.price : 10;
+          let newlyPurchased = [...purchasedStoryIds];
+
+          if (selectedBundle === 'vipDaily') {
+            setVipPassActive(true);
+            amountPaid = 50;
+          } else if (selectedBundle === 'bundle3') {
+            amountPaid = 25;
+            // Unlock current + next 2 stories
+            const nextStories = stories.slice(0, 3).map(s => s.id);
+            newlyPurchased = Array.from(new Set([...newlyPurchased, ...nextStories]));
+          } else if (pendingStoryToUnlock) {
+            newlyPurchased.push(pendingStoryToUnlock.id);
+          }
+
+          setPurchasedStoryIds(newlyPurchased);
+          localStorage.setItem('10m_purchases', JSON.stringify(newlyPurchased));
+
+          // Log transaction
+          const newTx = {
+            id: receiptCode,
+            phone: mpesaPhoneNumber,
+            amount: amountPaid,
+            item: pendingStoryToUnlock ? pendingStoryToUnlock.title : 'VIP Pass',
+            date: new Date().toLocaleTimeString(),
+            status: 'COMPLETED'
+          };
+          const updatedTxs = [newTx, ...transactions];
+          setTransactions(updatedTxs);
+          localStorage.setItem('10m_transactions', JSON.stringify(updatedTxs));
+
+          triggerToast(`✅ Payment Verified! Receipt ${receiptCode}. Full content unlocked.`, 'success');
+        }, 1500);
+      }, 2000);
+    }, 1200);
+  };
+
+  // Filtered stories based on category & search
+  const filteredStories = useMemo(() => {
+    return stories.filter(story => {
+      const matchesCat = activeCategory === 'all' || story.category === activeCategory;
+      const matchesSearch = story.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                            story.teaser.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesCat && matchesSearch;
+    });
+  }, [stories, activeCategory, searchQuery]);
+
+  // AI Headline & Content Generator Simulation
+  const handleGenerateAiDraft = () => {
+    if (!aiTopic) return;
+    setAiGeneratedDraft({
+      headline: `The Hidden Truth About ${aiTopic} Every Kenyan Should Know`,
+      teaser: `An exclusive investigation uncovering surprising facts, strategic opportunities, and actionable advice surrounding ${aiTopic}.`,
+      suggestedPrice: 20,
+      suggestedCategory: 'business',
+      keywords: ['Kenya', aiTopic, 'Trending2026', 'Opportunity']
+    });
+  };
+
+  // Header Component
+  return (
+    <div className={`min-h-screen transition-colors duration-200 ${theme === 'dark' ? 'bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-900'} font-sans pb-20 md:pb-8`}>
+      
+      {/* --- TOAST ALERT --- */}
+      {toastMessage && (
+        <div className="fixed top-4 right-4 z-50 max-w-md animate-bounce">
+          <div className={`p-4 rounded-xl shadow-2xl flex items-center space-x-3 border ${
+            toastMessage.type === 'success' 
+              ? 'bg-emerald-950 border-emerald-500/50 text-emerald-200' 
+              : 'bg-rose-950 border-rose-500/50 text-rose-200'
+          }`}>
+            <Zap className="w-5 h-5 text-amber-400 shrink-0" />
+            <p className="text-sm font-medium">{toastMessage.text}</p>
+          </div>
+        </div>
+      )}
+
+      {/* --- TOP NAVIGATION HEADER --- */}
+      <header className={`sticky top-0 z-40 border-b backdrop-blur-md ${theme === 'dark' ? 'bg-slate-950/90 border-slate-800' : 'bg-white/90 border-slate-200'}`}>
+        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+          
+          {/* Logo & Tagline */}
+          <div className="flex items-center space-x-3 cursor-pointer" onClick={() => { setSelectedStory(null); setActiveTab('home'); }}>
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 via-amber-500 to-emerald-400 flex items-center justify-center font-extrabold text-slate-950 shadow-lg shadow-emerald-900/30">
+              10M
+            </div>
+            <div>
+              <h1 className="font-black text-lg md:text-xl tracking-tight leading-none bg-gradient-to-r from-emerald-400 via-amber-300 to-emerald-200 bg-clip-text text-transparent">
+                10 MILLION IDEAS
+              </h1>
+              <span className="text-[10px] tracking-widest uppercase font-semibold text-amber-500 block">
+                KENYA • DISCOVER MORE
+              </span>
+            </div>
+          </div>
+
+          {/* Search Bar (Desktop) */}
+          <div className="hidden md:flex flex-1 max-w-md mx-8 relative">
+            <Search className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
+            <input 
+              type="text"
+              placeholder="Search EPL, news, business ideas, recipes..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className={`w-full pl-9 pr-4 py-2 text-sm rounded-full border focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
+                theme === 'dark' ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-slate-100 border-slate-200 text-slate-900'
+              }`}
+            />
+          </div>
+
+          {/* User Status / Entitlement Badge & Controls */}
+          <div className="flex items-center space-x-3">
+            {/* Complimentary Status Badge */}
+            <div className={`hidden sm:flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${
+              complimentaryUsed 
+                ? 'bg-amber-500/10 text-amber-400 border-amber-500/30' 
+                : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30 animate-pulse'
+            }`}>
+              {complimentaryUsed ? <Lock className="w-3.5 h-3.5" /> : <Sparkles className="w-3.5 h-3.5" />}
+              <span>{complimentaryUsed ? '1 Free Pass Used' : '1 Free Pass Available'}</span>
+            </div>
+
+            {/* Currency & VIP Pass status */}
+            <button 
+              onClick={() => triggerMpesaCheckout(null)}
+              className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs flex items-center space-x-1 shadow-md transition"
+            >
+              <Smartphone className="w-3.5 h-3.5" />
+              <span>{vipPassActive ? 'VIP Active' : 'Get VIP Pass'}</span>
+            </button>
+
+            {/* Dark/Light Mode Toggle */}
+            <button 
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className={`p-2 rounded-lg border ${theme === 'dark' ? 'border-slate-800 bg-slate-900 text-amber-400' : 'border-slate-200 bg-slate-100 text-slate-700'}`}
+              title="Toggle Theme"
+            >
+              {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Search Bar */}
+        <div className="md:hidden px-4 pb-2">
+          <div className="relative">
+            <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
+            <input 
+              type="text"
+              placeholder="Search stories, sports, money..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className={`w-full pl-9 pr-4 py-1.5 text-xs rounded-full border ${
+                theme === 'dark' ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-slate-100 border-slate-200 text-slate-900'
+              }`}
+            />
+          </div>
+        </div>
+      </header>
+
+      {/* --- SUB NAVIGATION TAB BAR (DESKTOP/MAIN) --- */}
+      <div className={`border-b ${theme === 'dark' ? 'bg-slate-900/50 border-slate-800' : 'bg-slate-100/50 border-slate-200'} sticky top-14 z-30 backdrop-blur-sm`}>
+        <div className="max-w-7xl mx-auto px-4 flex items-center justify-between overflow-x-auto no-scrollbar py-2">
+          <div className="flex space-x-1">
+            <button 
+              onClick={() => { setActiveTab('home'); setSelectedStory(null); }}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap flex items-center space-x-1.5 transition ${
+                activeTab === 'home' 
+                  ? 'bg-emerald-500 text-slate-950 font-bold' 
+                  : 'text-slate-400 hover:text-slate-100'
+              }`}
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Editorial Feed</span>
+            </button>
+
+            <button 
+              onClick={() => setActiveTab('rss')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap flex items-center space-x-1.5 transition ${
+                activeTab === 'rss' 
+                  ? 'bg-emerald-500 text-slate-950 font-bold' 
+                  : 'text-slate-400 hover:text-slate-100'
+              }`}
+            >
+              <Radio className="w-3.5 h-3.5" />
+              <span>Live RSS Trends</span>
+            </button>
+
+            <button 
+              onClick={() => setActiveTab('ai-assistant')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap flex items-center space-x-1.5 transition ${
+                activeTab === 'ai-assistant' 
+                  ? 'bg-emerald-500 text-slate-950 font-bold' 
+                  : 'text-slate-400 hover:text-slate-100'
+              }`}
+            >
+              <Zap className="w-3.5 h-3.5" />
+              <span>AI Newsroom Drafts</span>
+            </button>
+
+            <button 
+              onClick={() => setActiveTab('admin')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap flex items-center space-x-1.5 transition ${
+                activeTab === 'admin' 
+                  ? 'bg-amber-500 text-slate-950 font-bold' 
+                  : 'text-slate-400 hover:text-slate-100'
+              }`}
+            >
+              <Sliders className="w-3.5 h-3.5" />
+              <span>Publisher Dashboard</span>
+            </button>
+          </div>
+
+          <div className="hidden lg:flex items-center space-x-2 text-xs text-slate-400">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>Live Daraja STK Gate Connected</span>
+          </div>
+        </div>
+      </div>
+
+      {/* --- MAIN CONTENT SWITCHER --- */}
+      <main className="max-w-7xl mx-auto px-4 py-6">
+
+        {/* 1. INDIVIDUAL STORY READER VIEW */}
+        {selectedStory ? (
+          <div className="max-w-4xl mx-auto space-y-6">
+            <button 
+              onClick={() => setSelectedStory(null)}
+              className="text-xs font-bold text-emerald-400 flex items-center space-x-1 hover:underline"
+            >
+              ← Back to Editorial Discovery
+            </button>
+
+            <article className={`rounded-2xl border overflow-hidden ${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} shadow-2xl`}>
+              {/* Cover Banner */}
+              <div className="relative h-72 md:h-96 w-full overflow-hidden">
+                <img 
+                  src={selectedStory.thumbnail} 
+                  alt={selectedStory.title} 
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
+                <div className="absolute bottom-6 left-6 right-6 space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500 text-slate-950 uppercase tracking-wide">
+                      {selectedStory.category}
+                    </span>
+                    <span className="px-2.5 py-0.5 rounded-full text-xs bg-slate-900/80 text-slate-300 backdrop-blur-sm">
+                      {selectedStory.readTime}
+                    </span>
+                  </div>
+                  <h1 className="text-2xl md:text-4xl font-extrabold text-white leading-tight">
+                    {selectedStory.title}
+                  </h1>
+                </div>
+              </div>
+
+              {/* Story Header Details */}
+              <div className="p-6 md:p-8 space-y-6 border-b border-slate-800">
+                <div className="flex items-center justify-between text-xs text-slate-400">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center text-white font-bold text-xs">
+                      {selectedStory.author[0]}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-slate-200">{selectedStory.author}</p>
+                      <p className="text-[10px] text-slate-500">Published {selectedStory.date} • Verified Editorial</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <button 
+                      onClick={() => setIsPlayingAudio(!isPlayingAudio)} 
+                      className="flex items-center space-x-1 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-emerald-400 transition"
+                    >
+                      <Volume2 className="w-3.5 h-3.5" />
+                      <span>{isPlayingAudio ? 'Pause Audio' : 'Listen Story'}</span>
+                    </button>
+                    <button className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300">
+                      <Share2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Simulated Audio Bar */}
+                {isPlayingAudio && (
+                  <div className="p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/30 flex items-center space-x-3 text-xs text-emerald-300 animate-pulse">
+                    <Volume2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <p>Playing Swahili/English AI Voice Narration...</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Story Teaser (Always Visible) */}
+              <div className="p-6 md:p-8 space-y-4">
+                <p className="text-lg font-medium italic text-slate-300 border-l-4 border-amber-400 pl-4 py-1">
+                  "{selectedStory.teaser}"
+                </p>
+
+                {/* --- ACCESS CONTROL CHECK --- */}
+                {isEntitled(selectedStory) ? (
+                  /* UNLOCKED CONTENT VIEW */
+                  <div className="space-y-6 mt-6 animate-fadeIn">
+                    <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs flex items-center space-x-2">
+                      <CheckCircle2 className="w-4 h-4" />
+                      <span>Full Access Granted (Entitlement Verified)</span>
+                    </div>
+
+                    {selectedStory.type === 'video' ? (
+                      <div className="aspect-video w-full rounded-xl overflow-hidden bg-black relative border border-slate-800">
+                        <video controls className="w-full h-full object-cover">
+                          <source src={selectedStory.videoUrl} type="video/mp4" />
+                          Your browser does not support HTML video playback.
+                        </video>
+                      </div>
+                    ) : null}
+
+                    <div className="prose prose-invert max-w-none space-y-4 text-slate-200 leading-relaxed font-sans">
+                      {selectedStory.content.split('\n\n').map((paragraph, idx) => (
+                        <p key={idx}>{paragraph}</p>
+                      ))}
+                    </div>
+
+                    {/* Key Takeaways Box */}
+                    <div className="p-6 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+                      <h4 className="font-bold text-amber-400 text-sm uppercase tracking-wider flex items-center space-x-2">
+                        <Zap className="w-4 h-4" />
+                        <span>Key Takeaways for Readers</span>
+                      </h4>
+                      <ul className="text-xs text-slate-300 space-y-2 list-disc list-inside">
+                        <li>Verified source material analyzed by 10 Million Ideas Kenya team.</li>
+                        <li>Permanent reading rights saved to your local visitor entitlement token.</li>
+                        <li>Share this story preview link directly via WhatsApp or social media.</li>
+                      </ul>
+                    </div>
+                  </div>
+                ) : (
+                  /* LOCKED PAYWALL CTA VIEW */
+                  <div className="mt-8 relative pt-6 border-t border-slate-800">
+                    {/* Blurred Content Preview */}
+                    <div className="select-none filter blur-sm opacity-40 space-y-4 text-slate-400">
+                      <p>Exclusive deep-dive analysis continues here with proprietary data points, strategic interviews, and actionable conclusions for readers across Kenya.</p>
+                      <p>Subscribers and instant readers get total access to verified financial breakdowns, tactical maps, and original expert quotes recorded for this release.</p>
+                    </div>
+
+                    {/* Paywall Card Overlay */}
+                    <div className="mt-6 p-6 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900 to-emerald-950 border-2 border-emerald-500/40 text-center space-y-4 shadow-2xl">
+                      <div className="w-12 h-12 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-400 flex items-center justify-center mx-auto">
+                        <Lock className="w-6 h-6" />
+                      </div>
+                      
+                      <div>
+                        <h3 className="text-xl font-bold text-white">Unlock Full Story Access</h3>
+                        <p className="text-xs text-slate-400 mt-1">
+                          Complimentary pass already used. Instant full read for only <span className="text-emerald-400 font-bold">KSh {selectedStory.price}</span> via Safaricom M-Pesa.
+                        </p>
+                      </div>
+
+                      <div className="max-w-xs mx-auto space-y-2">
+                        <button 
+                          onClick={() => triggerMpesaCheckout(selectedStory)}
+                          className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-extrabold text-sm shadow-lg shadow-emerald-900/50 flex items-center justify-center space-x-2 transition"
+                        >
+                          <Smartphone className="w-4 h-4" />
+                          <span>Unlock Now • KSh {selectedStory.price}</span>
+                        </button>
+                        <p className="text-[10px] text-slate-400">
+                          Instant STK Push on your phone • Zero registration required
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </article>
+          </div>
+        ) : activeTab === 'home' ? (
+
+          /* 2. MAIN HOMEPAGE EDITORIAL DISCOVERY */
+          <div className="space-y-8">
+            
+            {/* HERO STORY SECTION */}
+            {filteredStories.filter(s => s.hero)[0] && (
+              <div 
+                onClick={() => handleOpenStory(filteredStories.filter(s => s.hero)[0])}
+                className="relative rounded-3xl overflow-hidden border border-slate-800 bg-slate-900 cursor-pointer group shadow-2xl transition hover:border-emerald-500/50"
+              >
+                {/* Hero Image */}
+                <div className="h-96 md:h-[450px] w-full overflow-hidden relative">
+                  <img 
+                    src={filteredStories.filter(s => s.hero)[0].thumbnail} 
+                    alt="Hero Story" 
+                    className="w-full h-full object-cover group-hover:scale-105 transition duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent"></div>
+                </div>
+
+                {/* Hero Details */}
+                <div className="absolute bottom-0 inset-x-0 p-6 md:p-10 space-y-3">
+                  <div className="flex items-center space-x-3">
+                    <span className="px-3 py-1 rounded-full text-xs font-black bg-amber-400 text-slate-950 uppercase tracking-widest flex items-center space-x-1">
+                      <Flame className="w-3.5 h-3.5 fill-current" />
+                      <span>TOP TRENDING</span>
+                    </span>
+                    <span className="text-xs font-semibold text-emerald-400 bg-emerald-950/80 px-2.5 py-0.5 rounded-full border border-emerald-500/30">
+                      {filteredStories.filter(s => s.hero)[0].readTime}
+                    </span>
+                  </div>
+
+                  <h2 className="text-2xl md:text-4xl font-extrabold text-white group-hover:text-emerald-300 transition leading-tight">
+                    {filteredStories.filter(s => s.hero)[0].title}
+                  </h2>
+
+                  <p className="text-sm md:text-base text-slate-300 max-w-3xl line-clamp-2">
+                    {filteredStories.filter(s => s.hero)[0].teaser}
+                  </p>
+
+                  <div className="pt-2 flex items-center justify-between">
+                    <div className="flex items-center space-x-2 text-xs text-slate-400">
+                      <span>By {filteredStories.filter(s => s.hero)[0].author}</span>
+                      <span>•</span>
+                      <span>{filteredStories.filter(s => s.hero)[0].views} Reads</span>
+                    </div>
+
+                    <div className="px-4 py-2 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs flex items-center space-x-1 group-hover:bg-emerald-400 transition">
+                      <span>Read Story</span>
+                      <ChevronRight className="w-4 h-4" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* CATEGORY SELECTOR CHIPS */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <h3 className="font-extrabold text-lg text-slate-100 flex items-center space-x-2">
+                  <TrendingUp className="w-5 h-5 text-emerald-400" />
+                  <span>Explore Categories</span>
+                </h3>
+                <span className="text-xs text-slate-400">Showing {filteredStories.length} curated stories</span>
+              </div>
+
+              <div className="flex space-x-2 overflow-x-auto no-scrollbar py-1">
+                {INITIAL_CATEGORIES.map(cat => {
+                  const Icon = cat.icon;
+                  const isActive = activeCategory === cat.id;
+                  return (
+                    <button
+                      key={cat.id}
+                      onClick={() => setActiveCategory(cat.id)}
+                      className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap flex items-center space-x-2 border transition ${
+                        isActive 
+                          ? 'bg-emerald-500 border-emerald-400 text-slate-950 shadow-lg shadow-emerald-950' 
+                          : theme === 'dark' 
+                            ? 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200' 
+                            : 'bg-white border-slate-200 text-slate-700 hover:text-slate-900'
+                      }`}
+                    >
+                      <Icon className="w-3.5 h-3.5" />
+                      <span>{cat.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* STORY GRID CARDS */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredStories.map(story => {
+                const entitled = isEntitled(story);
+                return (
+                  <div 
+                    key={story.id}
+                    onClick={() => handleOpenStory(story)}
+                    className={`rounded-2xl border overflow-hidden transition duration-300 hover:-translate-y-1 cursor-pointer flex flex-col justify-between group ${
+                      theme === 'dark' ? 'bg-slate-900 border-slate-800 hover:border-slate-700' : 'bg-white border-slate-200 hover:border-slate-300'
+                    } shadow-lg`}
+                  >
+                    <div>
+                      {/* Thumbnail Container */}
+                      <div className="relative h-48 w-full overflow-hidden bg-slate-800">
+                        <img 
+                          src={story.thumbnail} 
+                          alt={story.title} 
+                          className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                        />
+                        <div className="absolute top-3 left-3 flex items-center space-x-2">
+                          <span className="px-2.5 py-1 rounded-lg text-[10px] font-extrabold bg-slate-950/80 text-white backdrop-blur-md uppercase tracking-wider">
+                            {story.category}
+                          </span>
+                          {story.type === 'video' && (
+                            <span className="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-rose-600 text-white flex items-center space-x-1">
+                              <PlayCircle className="w-3 h-3" />
+                              <span>VIDEO</span>
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Lock / Unlock Indicator Badge */}
+                        <div className="absolute top-3 right-3">
+                          {entitled ? (
+                            <span className="p-1.5 rounded-full bg-emerald-500 text-slate-950 shadow-md">
+                              <Unlock className="w-3.5 h-3.5" />
+                            </span>
+                          ) : (
+                            <span className="px-2 py-1 rounded-lg bg-slate-950/90 text-amber-400 font-bold text-[10px] border border-amber-400/30 flex items-center space-x-1 backdrop-blur-md">
+                              <Lock className="w-3 h-3" />
+                              <span>KSh {story.price}</span>
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Content Details */}
+                      <div className="p-5 space-y-2">
+                        <h3 className="font-bold text-base text-slate-100 group-hover:text-emerald-400 transition leading-snug line-clamp-2">
+                          {story.title}
+                        </h3>
+                        <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+                          {story.teaser}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Card Footer */}
+                    <div className="p-5 pt-0 border-t border-slate-800/50 mt-4 flex items-center justify-between text-[11px] text-slate-400">
+                      <div className="flex items-center space-x-1">
+                        <Clock className="w-3 h-3" />
+                        <span>{story.readTime}</span>
+                      </div>
+
+                      <div className="font-semibold text-emerald-400 group-hover:translate-x-1 transition flex items-center space-x-1">
+                        <span>{entitled ? 'Read Full' : 'Unlock Story'}</span>
+                        <ChevronRight className="w-3.5 h-3.5" />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+        ) : activeTab === 'rss' ? (
+
+          /* 3. LIVE RSS NEWS TRENDS SIMULATOR */
+          <div className="max-w-4xl mx-auto space-y-6">
+            <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
+              <div className="flex items-center space-x-2 text-emerald-400 font-bold text-sm">
+                <Radio className="w-4 h-4 animate-pulse" />
+                <span>Automated Kenyan Source Monitor</span>
+              </div>
+              <h2 className="text-xl font-black text-white">Live Trending Headlines Aggregator</h2>
+              <p className="text-xs text-slate-400">
+                Authorized RSS feeds monitoring major Kenyan digital publishers: Tuko, Citizen, Nation, Standard, and Kenyans.co.ke.
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              {RSS_FEEDS_SIMULATION.map((rss, i) => (
+                <div key={i} className="p-4 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between hover:border-slate-700 transition">
+                  <div className="space-y-1">
+                    <div className="flex items-center space-x-2">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-amber-400">{rss.source}</span>
+                      <span className="text-[10px] text-slate-500">{rss.time}</span>
+                    </div>
+                    <p className="text-sm font-semibold text-slate-200">{rss.headline}</p>
+                  </div>
+
+                  <button 
+                    onClick={() => {
+                      setAiTopic(rss.headline);
+                      setActiveTab('ai-assistant');
+                    }}
+                    className="px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500 hover:text-slate-950 font-bold text-xs shrink-0 transition"
+                  >
+                    Draft Editorial Story →
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+
+        ) : activeTab === 'ai-assistant' ? (
+
+          /* 4. AI EDITORIAL ASSISTANT TOOL */
+          <div className="max-w-3xl mx-auto space-y-6">
+            <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
+              <div className="flex items-center space-x-2 text-amber-400 font-bold text-sm">
+                <Zap className="w-4 h-4" />
+                <span>AI Newsroom Assistant</span>
+              </div>
+              <h2 className="text-xl font-black text-white">Curiosity Headline & Draft Generator</h2>
+              <p className="text-xs text-slate-400">
+                Enter a raw news topic or standard event to generate high-converting viral titles and structured editorial summaries.
+              </p>
+
+              <div className="space-y-3 pt-2">
+                <input 
+                  type="text" 
+                  placeholder="e.g., Harambee Stars victory, Nairobi housing prices, Electric Boda Bodas..."
+                  value={aiTopic}
+                  onChange={(e) => setAiTopic(e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+                <button 
+                  onClick={handleGenerateAiDraft}
+                  className="w-full py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-sm flex items-center justify-center space-x-2 transition"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  <span>Generate AI Editorial Draft</span>
+                </button>
+              </div>
+            </div>
+
+            {aiGeneratedDraft && (
+              <div className="p-6 rounded-2xl bg-slate-900 border border-emerald-500/40 space-y-4 animate-fadeIn">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-emerald-400 uppercase tracking-widest">AI Generated Draft</span>
+                  <span className="text-xs text-slate-400">Suggested Price: KSh {aiGeneratedDraft.suggestedPrice}</span>
+                </div>
+
+                <div className="space-y-2">
+                  <h3 className="text-lg font-bold text-white">{aiGeneratedDraft.headline}</h3>
+                  <p className="text-xs text-slate-300 italic">{aiGeneratedDraft.teaser}</p>
+                </div>
+
+                <div className="flex flex-wrap gap-2 pt-2">
+                  {aiGeneratedDraft.keywords.map((kw, i) => (
+                    <span key={i} className="px-2.5 py-1 rounded-full text-[10px] bg-slate-800 text-slate-300">
+                      #{kw}
+                    </span>
+                  ))}
+                </div>
+
+                <button 
+                  onClick={() => {
+                    const newStory = {
+                      id: 'story-' + Date.now(),
+                      title: aiGeneratedDraft.headline,
+                      teaser: aiGeneratedDraft.teaser,
+                      category: aiGeneratedDraft.suggestedCategory,
+                      type: 'article',
+                      author: 'AI Editorial Team',
+                      date: 'Just Now',
+                      readTime: '4 min read',
+                      price: aiGeneratedDraft.suggestedPrice,
+                      isComplimentaryEligible: true,
+                      thumbnail: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80',
+                      views: '1',
+                      hero: false,
+                      content: `Full AI expanded draft content for topic "${aiTopic}". Reviewed and verified for human reader standards.`
+                    };
+                    setStories([newStory, ...stories]);
+                    triggerToast('Published AI draft directly to Editorial Feed!', 'success');
+                    setActiveTab('home');
+                  }}
+                  className="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-400 font-bold text-xs flex items-center justify-center space-x-1"
+                >
+                  <PlusCircle className="w-4 h-4" />
+                  <span>Publish Draft to Live Homepage</span>
+                </button>
+              </div>
+            )}
+          </div>
+
+        ) : activeTab === 'admin' ? (
+
+          /* 5. ADMIN & PUBLISHER DASHBOARD */
+          <div className="space-y-8">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+              <div>
+                <h2 className="text-2xl font-black text-white">Publisher Admin Dashboard</h2>
+                <p className="text-xs text-slate-400">Manage pricing, review M-Pesa revenue, configure Daraja keys, and publish stories.</p>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <button 
+                  onClick={() => setEditingStory({ title: '', teaser: '', category: 'football', price: 20, type: 'article', thumbnail: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=800&q=80' })}
+                  className="px-4 py-2 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs flex items-center space-x-1.5"
+                >
+                  <PlusCircle className="w-4 h-4" />
+                  <span>Create New Story</span>
+                </button>
+              </div>
+            </div>
+
+            {/* ANALYTICS SUMMARY CARDS */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
+                <span className="text-[10px] text-slate-400 uppercase font-bold">Total Revenue</span>
+                <p className="text-xl font-extrabold text-emerald-400">
+                  KSh {transactions.reduce((acc, curr) => acc + (curr.amount || 0), 0)}
+                </p>
+                <span className="text-[10px] text-emerald-500">M-Pesa Verified</span>
+              </div>
+
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
+                <span className="text-[10px] text-slate-400 uppercase font-bold">Successful Transactions</span>
+                <p className="text-xl font-extrabold text-white">{transactions.length}</p>
+                <span className="text-[10px] text-slate-500">Completed Payments</span>
+              </div>
+
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
+                <span className="text-[10px] text-slate-400 uppercase font-bold">Complimentary Passes</span>
+                <p className="text-xl font-extrabold text-amber-400">{complimentaryUsed ? '1 Active User' : '0 Used'}</p>
+                <span className="text-[10px] text-amber-500/80">Token Enforced</span>
+              </div>
+
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
+                <span className="text-[10px] text-slate-400 uppercase font-bold">Active Stories</span>
+                <p className="text-xl font-extrabold text-slate-100">{stories.length}</p>
+                <span className="text-[10px] text-slate-500">Published Content</span>
+              </div>
+            </div>
+
+            {/* CREATE / EDIT STORY MODAL FORM */}
+            {editingStory && (
+              <div className="p-6 rounded-2xl bg-slate-900 border border-emerald-500/50 space-y-4">
+                <h3 className="font-bold text-white text-base">Create / Edit Published Content</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                  <div>
+                    <label className="block text-slate-400 mb-1">Headline</label>
+                    <input 
+                      type="text" 
+                      value={editingStory.title}
+                      onChange={(e) => setEditingStory({...editingStory, title: e.target.value})}
+                      className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-white"
+                      placeholder="High-converting curiosity title"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-400 mb-1">Price (KSh)</label>
+                    <input 
+                      type="number" 
+                      value={editingStory.price}
+                      onChange={(e) => setEditingStory({...editingStory, price: Number(e.target.value)})}
+                      className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-400 mb-1">Category</label>
+                    <select 
+                      value={editingStory.category}
+                      onChange={(e) => setEditingStory({...editingStory, category: e.target.value})}
+                      className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-white"
+                    >
+                      {INITIAL_CATEGORIES.filter(c => c.id !== 'all').map(c => (
+                        <option key={c.id} value={c.id}>{c.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-slate-400 mb-1">Thumbnail Image URL</label>
+                    <input 
+                      type="text" 
+                      value={editingStory.thumbnail}
+                      onChange={(e) => setEditingStory({...editingStory, thumbnail: e.target.value})}
+                      className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-white"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-slate-400 text-xs mb-1">Teaser Summary</label>
+                  <textarea 
+                    value={editingStory.teaser}
+                    onChange={(e) => setEditingStory({...editingStory, teaser: e.target.value})}
+                    className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-white text-xs"
+                    rows={2}
+                  />
+                </div>
+
+                <div className="flex justify-end space-x-2">
+                  <button 
+                    onClick={() => setEditingStory(null)}
+                    className="px-4 py-2 rounded-lg bg-slate-800 text-slate-300 text-xs font-bold"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    onClick={() => {
+                      const updated = {
+                        ...editingStory,
+                        id: editingStory.id || 'story-' + Date.now(),
+                        author: 'Admin Editor',
+                        date: 'Just now',
+                        readTime: '3 min read',
+                        isComplimentaryEligible: true,
+                        views: '0',
+                        content: editingStory.content || 'Protected full editorial content body.'
+                      };
+                      setStories([updated, ...stories.filter(s => s.id !== updated.id)]);
+                      setEditingStory(null);
+                      triggerToast('Story published successfully!', 'success');
+                    }}
+                    className="px-4 py-2 rounded-lg bg-emerald-500 text-slate-950 text-xs font-bold"
+                  >
+                    Save & Publish
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* M-PESA DARAJA CONFIG TESTER */}
+            <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
+              <h3 className="font-bold text-white text-sm flex items-center space-x-2">
+                <Key className="w-4 h-4 text-emerald-400" />
+                <span>Safaricom Daraja API Gateway Configuration</span>
+              </h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                <div>
+                  <span className="text-slate-500 block">CONSUMER_KEY</span>
+                  <code className="bg-slate-950 px-2 py-1 rounded text-emerald-400 block mt-1 overflow-x-auto">
+                    MPESA_PROD_998127361
+                  </code>
+                </div>
+                <div>
+                  <span className="text-slate-500 block">SHORTCODE</span>
+                  <code className="bg-slate-950 px-2 py-1 rounded text-emerald-400 block mt-1">
+                    174379 (Paybill/STK)
+                  </code>
+                </div>
+                <div>
+                  <span className="text-slate-500 block">CALLBACK_ENDPOINT</span>
+                  <code className="bg-slate-950 px-2 py-1 rounded text-emerald-400 block mt-1 truncate">
+                    /api/payments/mpesa/callback
+                  </code>
+                </div>
+              </div>
+            </div>
+
+            {/* M-PESA TRANSACTIONS LEDGER */}
+            <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 overflow-x-auto">
+              <h3 className="font-bold text-white text-sm">Recent M-Pesa STK Transactions</h3>
+              {transactions.length === 0 ? (
+                <p className="text-xs text-slate-500">No completed payments recorded yet in this session.</p>
+              ) : (
+                <table className="w-full text-left text-xs text-slate-300">
+                  <thead className="bg-slate-950 text-slate-400 uppercase text-[10px]">
+                    <tr>
+                      <th className="p-3">Receipt Code</th>
+                      <th className="p-3">Phone Number</th>
+                      <th className="p-3">Amount</th>
+                      <th className="p-3">Purchased Content</th>
+                      <th className="p-3">Time</th>
+                      <th className="p-3">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800">
+                    {transactions.map(tx => (
+                      <tr key={tx.id} className="hover:bg-slate-800/50">
+                        <td className="p-3 font-mono text-amber-400">{tx.id}</td>
+                        <td className="p-3">{tx.phone}</td>
+                        <td className="p-3 font-bold text-emerald-400">KSh {tx.amount}</td>
+                        <td className="p-3 max-w-xs truncate">{tx.item}</td>
+                        <td className="p-3 text-slate-500">{tx.date}</td>
+                        <td className="p-3">
+                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                            {tx.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </div>
+
+        ) : null}
+
+      </main>
+
+      {/* --- M-PESA STK PUSH CHECKOUT MODAL --- */}
+      {showMpesaModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
+          <div className="w-full max-w-md rounded-3xl bg-slate-900 border-2 border-emerald-500/40 p-6 md:p-8 space-y-6 shadow-2xl relative">
+            <button 
+              onClick={() => setShowMpesaModal(false)}
+              className="absolute top-4 right-4 p-2 rounded-full text-slate-400 hover:text-white bg-slate-800"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            {/* Header */}
+            <div className="text-center space-y-2">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-500 text-slate-950 flex items-center justify-center mx-auto shadow-lg shadow-emerald-950">
+                <Smartphone className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-extrabold text-white">M-Pesa Express Checkout</h3>
+              <p className="text-xs text-slate-400">
+                Safaricom STK Push instant unlock for 10 Million Ideas Kenya
+              </p>
+            </div>
+
+            {/* Select Options */}
+            <div className="space-y-2">
+              <label className="block text-xs font-bold text-slate-300">Choose Purchase Option:</label>
+              <div className="grid grid-cols-3 gap-2">
+                <button
+                  onClick={() => setSelectedBundle('single')}
+                  className={`p-3 rounded-xl border text-center transition ${
+                    selectedBundle === 'single'
+                      ? 'border-emerald-500 bg-emerald-500/10 text-emerald-300'
+                      : 'border-slate-800 bg-slate-950 text-slate-400'
+                  }`}
+                >
+                  <span className="block text-xs font-bold">This Story</span>
+                  <span className="text-sm font-extrabold text-white">KSh {pendingStoryToUnlock ? pendingStoryToUnlock.price : 10}</span>
+                </button>
+
+                <button
+                  onClick={() => setSelectedBundle('bundle3')}
+                  className={`p-3 rounded-xl border text-center transition ${
+                    selectedBundle === 'bundle3'
+                      ? 'border-emerald-500 bg-emerald-500/10 text-emerald-300'
+                      : 'border-slate-800 bg-slate-950 text-slate-400'
+                  }`}
+                >
+                  <span className="block text-xs font-bold">3 Stories</span>
+                  <span className="text-sm font-extrabold text-amber-400">KSh 25</span>
+                </button>
+
+                <button
+                  onClick={() => setSelectedBundle('vipDaily')}
+                  className={`p-3 rounded-xl border text-center transition ${
+                    selectedBundle === 'vipDaily'
+                      ? 'border-emerald-500 bg-emerald-500/10 text-emerald-300'
+                      : 'border-slate-800 bg-slate-950 text-slate-400'
+                  }`}
+                >
+                  <span className="block text-xs font-bold">VIP 24H Pass</span>
+                  <span className="text-sm font-extrabold text-emerald-400">KSh 50</span>
+                </button>
+              </div>
+            </div>
+
+            {/* M-Pesa Phone Input & Process */}
+            {mpesaStatus === 'idle' && (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs text-slate-400 mb-1 font-semibold">
+                    Enter Safaricom Phone Number:
+                  </label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-3 text-xs font-bold text-slate-500">+254</span>
+                    <input 
+                      type="text" 
+                      placeholder="712345678 or 0712345678"
+                      value={mpesaPhoneNumber}
+                      onChange={(e) => setMpesaPhoneNumber(e.target.value)}
+                      className="w-full pl-14 pr-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    />
+                  </div>
+                </div>
+
+                <button 
+                  onClick={handleProcessMpesaPayment}
+                  className="w-full py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-sm shadow-xl flex items-center justify-center space-x-2 transition"
+                >
+                  <span>Request M-Pesa STK Push</span>
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+
+            {/* STK Push Lifecycle Loader & Prompts */}
+            {mpesaStatus !== 'idle' && (
+              <div className="py-6 text-center space-y-4">
+                {mpesaStatus === 'initiating' && (
+                  <div className="space-y-3">
+                    <RefreshCw className="w-8 h-8 text-emerald-400 animate-spin mx-auto" />
+                    <p className="text-xs text-slate-300 font-semibold">Connecting to Safaricom Daraja API Gateway...</p>
+                  </div>
+                )}
+
+                {mpesaStatus === 'prompt_sent' && (
+                  <div className="space-y-3 animate-pulse">
+                    <div className="w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center mx-auto border border-amber-500/40">
+                      <Smartphone className="w-6 h-6" />
+                    </div>
+                    <p className="text-sm font-bold text-white">STK Push Sent to {mpesaPhoneNumber}</p>
+                    <p className="text-xs text-slate-400">Please check your mobile phone screen and enter your M-Pesa PIN.</p>
+                  </div>
+                )}
+
+                {mpesaStatus === 'pin_entered' && (
+                  <div className="space-y-3">
+                    <RefreshCw className="w-8 h-8 text-amber-400 animate-spin mx-auto" />
+                    <p className="text-xs text-amber-300 font-semibold">Validating Transaction Callback from Safaricom...</p>
+                  </div>
+                )}
+
+                {mpesaStatus === 'success' && (
+                  <div className="space-y-4 animate-fadeIn">
+                    <div className="w-12 h-12 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center mx-auto shadow-lg">
+                      <Check className="w-6 h-6 stroke-[3]" />
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-black text-white">Payment Confirmed!</h4>
+                      <p className="text-xs text-slate-400 mt-1">Receipt Code: <span className="font-mono text-amber-400 font-bold">{mpesaReceipt}</span></p>
+                    </div>
+
+                    <button 
+                      onClick={() => setShowMpesaModal(false)}
+                      className="w-full py-3 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs"
+                    >
+                      Return & Enjoy Story
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* --- FOOTER COMPLIANCE & LEGAL --- */}
+      <footer className={`mt-16 border-t ${theme === 'dark' ? 'bg-slate-950 border-slate-900 text-slate-400' : 'bg-slate-100 border-slate-200 text-slate-600'} py-12 px-4`}>
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 text-xs">
+          <div className="space-y-3">
+            <div className="flex items-center space-x-2">
+              <div className="w-7 h-7 rounded-lg bg-emerald-500 flex items-center justify-center font-bold text-slate-950 text-xs">
+                10M
+              </div>
+              <span className="font-extrabold text-slate-100 text-sm tracking-tight">10 MILLION IDEAS KENYA</span>
+            </div>
+            <p className="text-slate-500 leading-relaxed">
+              Discover More. Know More. Enjoy More. Kenya's premier anonymous paid digital editorial and breaking story platform.
+            </p>
+          </div>
+
+          <div>
+            <h4 className="font-bold text-slate-200 uppercase tracking-wider mb-3 text-[11px]">Editorial Categories</h4>
+            <ul className="space-y-2">
+              <li>EPL & Harambee Stars Football</li>
+              <li>Kenya Breaking News & Governance</li>
+              <li>Household Life Hacks & Budgeting</li>
+              <li>Kenyan Side Hustles & Business Ideas</li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-bold text-slate-200 uppercase tracking-wider mb-3 text-[11px]">Payment & Rights</h4>
+            <ul className="space-y-2">
+              <li>Safaricom M-Pesa STK Express</li>
+              <li>Complimentary Entitlement Token Policy</li>
+              <li>Privacy & Kenyan Data Protection Compliance</li>
+              <li>Instant M-Pesa Refund Protocols</li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-bold text-slate-200 uppercase tracking-wider mb-3 text-[11px]">Publisher & Sources</h4>
+            <p className="text-slate-500 leading-relaxed">
+              Curated stories synthesized from authorized partner wire feeds and verified local editorial contributors across Kenya.
+            </p>
+            <p className="mt-3 text-[10px] text-slate-600">
+              © 2026 10 Million Ideas Kenya. All Rights Reserved.
+            </p>
+          </div>
+        </div>
+      </footer>
+
+      {/* --- MOBILE STICKY BOTTOM NAVIGATION BAR --- */}
+      <nav className={`md:hidden fixed bottom-0 inset-x-0 z-40 border-t ${theme === 'dark' ? 'bg-slate-950/95 border-slate-800 text-slate-400' : 'bg-white/95 border-slate-200 text-slate-600'} backdrop-blur-lg flex justify-around py-2`}>
+        <button 
+          onClick={() => { setSelectedStory(null); setActiveTab('home'); }}
+          className={`flex flex-col items-center space-y-1 ${activeTab === 'home' && !selectedStory ? 'text-emerald-400 font-bold' : ''}`}
+        >
+          <Sparkles className="w-5 h-5" />
+          <span className="text-[10px]">Home</span>
+        </button>
+
+        <button 
+          onClick={() => { setSelectedStory(null); setActiveCategory('football'); setActiveTab('home'); }}
+          className={`flex flex-col items-center space-y-1 ${activeCategory === 'football' ? 'text-emerald-400 font-bold' : ''}`}
+        >
+          <Trophy className="w-5 h-5" />
+          <span className="text-[10px]">Football</span>
+        </button>
+
+        <button 
+          onClick={() => setActiveTab('rss')}
+          className={`flex flex-col items-center space-y-1 ${activeTab === 'rss' ? 'text-emerald-400 font-bold' : ''}`}
+        >
+          <Radio className="w-5 h-5" />
+          <span className="text-[10px]">Live RSS</span>
+        </button>
+
+        <button 
+          onClick={() => triggerMpesaCheckout(null)}
+          className="flex flex-col items-center space-y-1 text-amber-400 font-bold"
+        >
+          <Smartphone className="w-5 h-5" />
+          <span className="text-[10px]">VIP Pass</span>
+        </button>
+
+        <button 
+          onClick={() => setActiveTab('admin')}
+          className={`flex flex-col items-center space-y-1 ${activeTab === 'admin' ? 'text-emerald-400 font-bold' : ''}`}
+        >
+          <Sliders className="w-5 h-5" />
+          <span className="text-[10px]">Admin</span>
+        </button>
+      </nav>
+
+    </div>
+  );
+}
